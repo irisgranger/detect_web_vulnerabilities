@@ -18,17 +18,21 @@ def home():
 @app.route('/predict', methods=['POST'])
 def predict():
     try:
-        # Lấy dữ liệu JSON từ request
-        data = request.get_json()
+        # Lấy dữ liệu đầu vào từ request
+        data = request.json
+        if not data:
+            return jsonify({'error': 'No input data provided'}), 400
         
+        # Kiểm tra dữ liệu đầu vào có đúng định dạng không
         if 'features' not in data:
-            return jsonify({'error': 'Missing features in request'}), 400
+            return jsonify({'error': 'Missing "features" in input data'}), 400
         
-        features = np.array(data['features']).reshape(1, -1)  # Chuyển về mảng 2D
-        prediction = model.predict(features)[0]  # Dự đoán lớp lỗ hổng
-        result = vulnerability_classes.get(prediction, 'Unknown Vulnerability')
+        # Dữ liệu phải là list các đặc trưng
+        features = data['features']
+        prediction = model.predict([features])  # Dự đoán
         
-        return jsonify({'prediction': result})
+        # Trả về kết quả
+        return jsonify({'prediction': prediction.tolist()})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
