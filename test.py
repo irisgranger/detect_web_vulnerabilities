@@ -25,3 +25,8 @@ for idx, data in enumerate(test_data):
             print(f"Error: {response.status_code} - {response.text}\n")
     except Exception as e:
         print(f"Test case {idx + 1} failed with error: {str(e)}\n")
+
+if response.json()['prediction'][0] == 0:
+    print("✅ Input này không phải là lỗ hổng.")
+else:
+    print("⚠️ Input này là lỗ hổng. Đề xuất kiểm tra thêm.")
